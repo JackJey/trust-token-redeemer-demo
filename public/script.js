@@ -1,41 +1,62 @@
-// client-side js, loaded by index.html
-// run by the browser each time the page is loaded
+"use strict";
+const $ = document.querySelector.bind(document);
+const $$ = document.querySelectorAll.bind(document);
+EventTarget.prototype.on = EventTarget.prototype.addEventListener;
 
-console.log("hello world :o");
-
-// define variables that reference elements on our page
-const dreamsList = document.getElementById("dreams");
-const dreamsForm = document.querySelector("form");
-
-// a helper function that creates a list item for a given dream
-function appendNewDream(dream) {
-  const newListItem = document.createElement("li");
-  newListItem.innerText = dream;
-  dreamsList.appendChild(newListItem);
+function base64decode(str) {
+  return new Uint8Array([...atob(str)].map(a => a.charCodeAt(0)));
 }
 
-// fetch the initial list of dreams
-fetch("/dreams")
-  .then(response => response.json()) // parse the JSON from the server
-  .then(dreams => {
-    // remove the loading text
-    dreamsList.firstElementChild.remove();
-  
-    // iterate through every dream and add it to our page
-    dreams.forEach(appendNewDream);
-  
-    // listen for the form to be submitted and add a new dream when it is
-    dreamsForm.addEventListener("submit", event => {
-      // stop our form submission from refreshing the page
-      event.preventDefault();
+document.on("DOMContentLoaded", async e => {
+  console.log(e);
 
-      // get dream value and add it to the list
-      let newDream = dreamsForm.elements.dream.value;
-      dreams.push(newDream);
-      appendNewDream(newDream);
+  const ISSUER = "https://trust-token-issuer.glitch.me";
 
-      // reset form
-      dreamsForm.reset();
-      dreamsForm.elements.dream.focus();
-    });
+  $("summary").on("click", async e => {
+    e.preventDefault();
+
+    $("dialog").showModal();
+
+    // check token exists
+    const token = await document.hasTrustToken(ISSUER);
+    console.log(token);
+
+    if (token === false) {
+      // no token
+      $("#go2issuer").style.display = "revert";
+    } else {
+      // redemption request
+      await fetch(`${ISSUER}/.well-known/trust-token/redemption`, {
+        method: "POST",
+        trustToken: {
+          type: "srr-token-redemption",
+          issuer: ISSUER,
+          // refreshPolicy: "refresh"
+        }
+      });
+
+      // send SRR and echo Sec-Signed-Eedemption-Record
+      const res = await fetch(`${ISSUER}/.well-known/trust-token/send-srr`, {
+        method: "POST",
+        trustToken: {
+          type: "send-srr",
+          issuer: ISSUER, // deprecated
+          issuers: [ISSUER]
+        }
+      });
+      const body = await res.text();
+      console.log(body);
+
+      // TODO: structured-header decode
+      const base64 = atob(body.match(/redemption-record=:(.*):/)[1])
+        .split(",")[0]
+        .match(/body=:(.*):/)[1];
+      const bytes = base64decode(base64);
+      const result = CBOR.decode(bytes.buffer);
+
+      $("textarea").value = JSON.stringify(result, " ", " ");
+    }
   });
+
+  $("summary").click();
+});

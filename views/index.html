@@ -1,52 +1,76 @@
-<!-- This is a static file -->
-<!-- served from your routes in server.js -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A cool thing made with Glitch">
-
-    <title>Welcome to Glitch!</title>
-
-    <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css">
-
-    <!-- import the webpage's client-side javascript file -->
+    <title>Trust Token demo</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="origin-trial"
+      content="AjvtDw0MlMw000own+D9phltQCo1uB7UraCp4ZgZoa8GskjR1WsIq67q+1GSj5b8aHFmOR+kyfH9Bl2LWWbkKw0AAAB2eyJvcmlnaW4iOiJodHRwczovL3RydXN0LXRva2VuLXJlZGVlbWVyLmdsaXRjaC5tZTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MDQ0NjkzNDcsImlzU3ViZG9tYWluIjp0cnVlfQ=="
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/cbor-js-unofficial@0.1.0-a4/cbor.min.js"
+      defer
+    ></script>
     <script src="/script.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1>A Dream of the Future</h1>
-    </header>
-
     <main>
-      <h2>Oh hi,</h2>
+      <h1>Trust Token Redeemer demo</h1>
 
-      <p>Tell me your hopes and dreams:</p>
+      <details>
+        <summary
+          >Lorem ipsum...<strong>(click continue to read)</strong></summary
+        >
+        <p>
+          dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua.
+        </p>
+        <p>
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+          nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur.
+        </p>
+        <p>
+          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+          officia deserunt mollit anim id est laborum.
+        </p>
+      </details>
+      <style>
+        body {
+          font-family: "Google Sans", sans-serif;
+        }
+        dialog {
+          max-width: 80vw;
+          border-radius: 1rem;
+          border: solid 1px #ccc;
+          box-shadow: 0 0 4px black;
+        }
 
-      <form>
-        <label>
-          New Dream
-          <input name="dream" type="text" maxlength="100" required placeholder="Dreams!">
-        </label>
-        <button type="submit" id="submit-dream">Add Dream</button>
-      </form>
+        dialog::backdrop {
+          background: rgba(200, 200, 200, 0.8);
+        }
 
-      <section class="dreams">
-        <ul id="dreams">
-          <em>loading dreams&hellip;</em>
-        </ul>
-      </section>
+        dialog ol {
+          margin: 0;
+          padding: 0 0 0 1rem;
+        }
+        
+        #go2issuer {
+          display: none;
+        }
+      </style>
+      <dialog>
+        <ol>
+          <li>Checking you are a human or bot...</li>
+          <li>Checking you have a Trust Token...</li>
+          <li id="go2issuer">Go to <a href="https://trust-token-issuer.glitch.me?back=https://trust-token-redeemer.glitch.me">Trust Token Issuer</a></li>
+        </ol>
+      </dialog>
+      <textarea></textarea>
     </main>
-
-    <footer>Made with <a href="https://glitch.com">Glitch</a>!</footer>
-
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:2em;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js" defer></script>
   </body>
 </html>
