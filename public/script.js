@@ -25,6 +25,8 @@ document.on("DOMContentLoaded", async e => {
       // no token
       $("#go2issuer").style.display = "revert";
     } else {
+      $("dialog").close();
+
       // redemption request
       await fetch(`${ISSUER}/.well-known/trust-token/redemption`, {
         method: "POST",
