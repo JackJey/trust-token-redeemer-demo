@@ -43,34 +43,73 @@
         body {
           font-family: "Google Sans", sans-serif;
         }
+        details {
+          font-size: 1rem;
+        }
         dialog {
+          top: 10vh;
           max-width: 80vw;
+          max-height: 80vh;
+
           border-radius: 1rem;
           border: solid 1px #ccc;
           box-shadow: 0 0 4px black;
+        }
+        dialog section {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
         }
 
         dialog::backdrop {
           background: rgba(200, 200, 200, 0.8);
         }
+        dialog h2 {
+          color: red;
+          margin-block-top: 1rem;
+          margin-block-bottom: 1rem;
+        }
 
         dialog ol {
           margin: 0;
-          padding: 0 0 0 1rem;
+          padding: 0 0 0 1.4rem;
         }
-        
-        #go2issuer {
+
+        dialog ol li {
+          font-size: 1.4rem;
+          line-height: 1.8rem;
           display: none;
+        }
+        #finish {
+          color: blue;
+          font-weight: bold;
         }
       </style>
       <dialog>
-        <ol>
-          <li>Checking you are a human or bot...</li>
-          <li>Checking you have a Trust Token...</li>
-          <li id="go2issuer">Go to <a href="https://trust-token-issuer.glitch.me?back=https://trust-token-redeemer.glitch.me">Trust Token Issuer</a></li>
-        </ol>
+        <section>
+          <h2>Are you really a humna?</h2>
+          <ol>
+            <li id="checking">Checking you are a human or bot...</li>
+            <li id="hasTrustToken">Checking you have a Trust Token...</li>
+            <li id="go2issuer">
+              Go to
+              <a
+                href="https://trust-token-issuer.glitch.me?back=https://trust-token-redeemer.glitch.me"
+                >Trust Token Issuer</a
+              >
+              to get token!
+            </li>
+            <li id="found">Trust Token found!!</li>
+            <li id="redemption">Request redemption to issuer</li>
+            <li id="cached">Already Cached</li>
+            <li id="verify">verifying your trust token now...</li>
+            <li id="finish">I found you really a human !!</li>
+          </ol>
+        </section>
       </dialog>
-      <textarea></textarea>
     </main>
   </body>
 </html>

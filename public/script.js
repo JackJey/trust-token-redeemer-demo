@@ -7,38 +7,62 @@ function base64decode(str) {
   return new Uint8Array([...atob(str)].map(a => a.charCodeAt(0)));
 }
 
+function sleep(ms) {
+  return new Promise((done, fail) => {
+    setTimeout(done, ms);
+  });
+}
+
+async function progress(message) {
+  $(message).style.display = "revert";
+  await sleep(1000);
+}
+
 document.on("DOMContentLoaded", async e => {
   console.log(e);
 
   const ISSUER = "https://trust-token-issuer.glitch.me";
 
-  $("summary").on("click", async e => {
+  async function verify_human(e) {
     e.preventDefault();
-
     $("dialog").showModal();
+
+    await progress("#checking");
 
     // check token exists
     const token = await document.hasTrustToken(ISSUER);
     console.log(token);
 
+    await progress("#hasTrustToken");
+
     if (token === false) {
       // no token
-      $("#go2issuer").style.display = "revert";
+      await progress("#go2issuer");
     } else {
-      $("dialog").close();
+      await progress("#found");
 
-      // redemption request
-      await fetch(`${ISSUER}/.well-known/trust-token/redemption`, {
-        method: "POST",
-        trustToken: {
-          type: "srr-token-redemption",
-          issuer: ISSUER,
-          // refreshPolicy: "refresh"
-        }
-      });
+      try {
+        await progress("#redemption");
 
-      // send SRR and echo Sec-Signed-Eedemption-Record
-      const res = await fetch(`${ISSUER}/.well-known/trust-token/send-srr`, {
+        // redemption request
+        await fetch(`${ISSUER}/.well-known/trust-token/redemption`, {
+          method: "POST",
+          trustToken: {
+            type: "srr-token-redemption",
+            issuer: ISSUER
+            // refreshPolicy: "refresh"
+          }
+        });
+      } catch (err) {
+        await progress("#cached");
+
+        console.info(err);
+      }
+
+      await progress("#verify");
+
+      // send SRR to the redeemer server
+      const res = await fetch(`/.well-known/trust-token/send-srr`, {
         method: "POST",
         trustToken: {
           type: "send-srr",
@@ -48,17 +72,13 @@ document.on("DOMContentLoaded", async e => {
       });
       const body = await res.text();
       console.log(body);
+      await progress("#finish");
 
-      // TODO: structured-header decode
-      const base64 = atob(body.match(/redemption-record=:(.*):/)[1])
-        .split(",")[0]
-        .match(/body=:(.*):/)[1];
-      const bytes = base64decode(base64);
-      const result = CBOR.decode(bytes.buffer);
-
-      $("textarea").value = JSON.stringify(result, " ", " ");
+      $("dialog").close();
+      $("summary").removeEventListener("click", verify_human)
+      e.target.click()
     }
-  });
+  }
 
-  $("summary").click();
+  $("summary").on("click", verify_human);
 });
