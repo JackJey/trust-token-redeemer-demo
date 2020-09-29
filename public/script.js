@@ -61,22 +61,34 @@ document.on("DOMContentLoaded", async e => {
 
       await progress("#verify");
 
-      // send SRR to the redeemer server
+      // send SRR and echo Sec-Signed-Eedemption-Record
       const res = await fetch(`/.well-known/trust-token/send-srr`, {
+        headers: new Headers({
+          "Signed-Headers": "sec-signed-redemption-record, sec-time"
+        }),
+
         method: "POST",
         trustToken: {
           type: "send-srr",
           issuer: ISSUER, // deprecated
-          issuers: [ISSUER]
+          issuers: [ISSUER],
+          includeTimestampHeader: true,
+          signRequestData: "include",
+          additionalSigningData: "additional_signing_data"
         }
       });
-      const body = await res.text();
-      console.log(body);
-      await progress("#finish");
 
-      $("dialog").close();
-      $("summary").removeEventListener("click", verify_human)
-      e.target.click()
+      const body = await res.json();
+      console.log(JSON.stringify(body, " ", " "));
+
+      if (body.srr_verify && body.public_key_verify && body.sig_verify) {
+        await progress("#finish");
+        $("dialog").close();
+        $("summary").removeEventListener("click", verify_human);
+        e.target.click();
+      } else {
+        await progress("#failed");
+      }
     }
   }
 

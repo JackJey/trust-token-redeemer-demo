@@ -8,12 +8,15 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "structured-headers": "git+https://github.com/JackJey/structured-headers.git",
     "cbor": "^5.1.0",
-    "ed25519": "^0.0.4",
+    "structured-field-values": "^0.0.2",
+    "noble-ed25519": "^1.0.1",
     "node-fetch": "^2.6.1"
   },
   "trust_token": {
     "ISSUER": "https://trust-token-issuer.glitch.me"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
