@@ -14,7 +14,7 @@
     "node-fetch": "^2.6.1"
   },
   "trust_token": {
-    "ISSUER": "https://trust-token-issuer.glitch.me"
+    "ISSUER": "https://trust-token-issuer-demo.glitch.me"
   },
   "engines": {
     "node": "12.x"

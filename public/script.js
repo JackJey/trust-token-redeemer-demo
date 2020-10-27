@@ -21,7 +21,7 @@ async function progress(message) {
 document.on("DOMContentLoaded", async e => {
   console.log(e);
 
-  const ISSUER = "https://trust-token-issuer.glitch.me";
+  const ISSUER = "https://trust-token-issuer-demo.glitch.me";
 
   async function verify_human(e) {
     e.preventDefault();

@@ -31,13 +31,13 @@ app.post(`/.well-known/trust-token/send-srr`, async (req, res) => {
   const { body, signature } = redemption_record;
 
   const key_commitment_url =
-    "https://trust-token-issuer.glitch.me/.well-known/trust-token/key-commitment";
+    "https://trust-token-issuer-demo.glitch.me/.well-known/trust-token/key-commitment";
   const key_commitment_res = await fetch(key_commitment_url);
   const key_commitment = await key_commitment_res.json();
 
   // verify signature
   const srr_public_key = Buffer.from(
-    key_commitment.COMMITMENT["https://trust-token-issuer.glitch.me"].srrkey,
+    key_commitment.COMMITMENT["https://trust-token-issuer-demo.glitch.me"].srrkey,
     "base64"
   );
   const srr_verify = await ed25519.verify(
@@ -76,7 +76,7 @@ app.post(`/.well-known/trust-token/send-srr`, async (req, res) => {
     new Map([
       ["sec-time", headers["sec-time"]],
       ["public-key", client_public_key],
-      ["destination", "trust-token-redeemer.glitch.me"],
+      ["destination", "trust-token-redeemer-demo.glitch.me"],
       ["sec-signed-redemption-record", headers["sec-signed-redemption-record"]],
       [
         "sec-trust-tokens-additional-signing-data",
