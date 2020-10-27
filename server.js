@@ -34,10 +34,11 @@ app.post(`/.well-known/trust-token/send-srr`, async (req, res) => {
     "https://trust-token-issuer-demo.glitch.me/.well-known/trust-token/key-commitment";
   const key_commitment_res = await fetch(key_commitment_url);
   const key_commitment = await key_commitment_res.json();
+  console.log(key_commitment)
 
   // verify signature
   const srr_public_key = Buffer.from(
-    key_commitment.COMMITMENT["https://trust-token-issuer-demo.glitch.me"].srrkey,
+    key_commitment.srrkey,
     "base64"
   );
   const srr_verify = await ed25519.verify(
