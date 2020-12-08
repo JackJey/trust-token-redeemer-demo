@@ -1,0 +1,10 @@
+details {
+  height: 1em;
+  padding: 1em;
+  background: #eee;
+  border-radius: 4px;
+  transition: .5s;
+}
+details[open] {
+  height: 50vh;
+}
