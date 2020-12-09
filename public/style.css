@@ -1,13 +1,29 @@
-main {
-  font-family: "Google Sans", Segoe UI, system-ui, -apple-system, sans-serif;
-  font-weight: 500;
-  color: #333;
+body {
   margin: 0 auto;
   max-width: 750px;
 }
 
+main {
+  font-family: "Google Sans", Segoe UI, system-ui, -apple-system, sans-serif;
+  height: 90vh;
+  color: #333;
+}
+
+footer {
+  color: #555;
+}
+
+h1 {
+  font-size: 1.8em;
+}
+
 strong {
   color: red;
+}
+
+em {
+  font-weight: bold;
+  font-style: normal;
 }
 
 details {
