@@ -43,66 +43,6 @@
           officia deserunt mollit anim id est laborum.
         </p>
       </details>
-      <style>
-        main {
-          font-family: "Google Sans", Segoe UI, system-ui, -apple-system,
-            sans-serif;
-          font-weight: 500;
-          color: #333;
-          margin: 0 auto;
-          max-width: 750px;
-        }
-        strong {
-          color: red;
-        }
-        details {
-          font-size: 1rem;
-        }
-        dialog {
-          top: 10vh;
-          max-width: 80vw;
-          max-height: 80vh;
-
-          border-radius: 1rem;
-          border: solid 1px #ccc;
-          box-shadow: 0 0 4px black;
-        }
-        dialog section {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        dialog::backdrop {
-          background: rgba(200, 200, 200, 0.8);
-        }
-        dialog h2 {
-          color: red;
-          margin-block-top: 1rem;
-          margin-block-bottom: 1rem;
-        }
-
-        dialog ol {
-          margin: 0;
-          padding: 0 0 0 1.4rem;
-        }
-
-        dialog ol li {
-          font-size: 1.4rem;
-          line-height: 1.8rem;
-          display: none;
-        }
-        #finish {
-          color: blue;
-          font-weight: bold;
-        }
-        dialog a:visited {
-          color: #3740ff;
-        }
-      </style>
       <dialog>
         <section>
           <h2>Are you really a humna?</h2>
@@ -120,7 +60,7 @@
             <li id="found">Trust Token found!!</li>
             <li id="redemption">Request redemption to issuer</li>
             <li id="cached">Already Cached</li>
-            <li id="verify">verifying your trust token now...</li>
+            <li id="verify">Verifying your trust token now...</li>
             <li id="finish">I found you really a human !!</li>
             <li id="failed">Faield to redeem token</li>
           </ol>
