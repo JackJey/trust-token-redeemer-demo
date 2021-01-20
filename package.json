@@ -17,6 +17,6 @@
     "ISSUER": "https://trust-token-issuer-demo.glitch.me"
   },
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   }
 }
