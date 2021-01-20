@@ -1,3 +1,5 @@
+/* Copyright 2020 Google LLC. SPDX-License-Identifier: Apache-2.0 */
+
 "use strict";
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);

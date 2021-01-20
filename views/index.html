@@ -1,78 +1,70 @@
+<!-- Copyright 2020 Google LLC. SPDX-License-Identifier: Apache-2.0 -->
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Trust Token DEMO</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="shortcut icon"
-      href="https://cdn.glitch.com/133fbe86-518f-4a5c-8857-0810a62fb7ae%2Ffavicon.png?v=1607442443490"
-    />
-    <meta
-      http-equiv="origin-trial"
-      content="Aufweu8GwlOtOB/s4xEUgMx6+WvvqGnaVhixCuPWdQLcAzC85Va4Wp0IAp6HtP3ZJzzrFwRMQAz44HVwnFZDEgoAAABoeyJvcmlnaW4iOiJodHRwczovL3RydXN0LXRva2VuLXJlZGVlbWVyLWRlbW8uZ2xpdGNoLm1lOjQ0MyIsImZlYXR1cmUiOiJUcnVzdFRva2VucyIsImV4cGlyeSI6MTYxMTA3MjA2MH0="
-    />
-    <link rel="stylesheet" href="/style.css" />
-    <script
-      src="https://cdn.jsdelivr.net/npm/cbor-js-unofficial@0.1.0-a4/cbor.min.js"
-      defer
-    ></script>
-    <script src="/script.js" defer></script>
-  </head>
-  <body>
-    <main>
-      <h1>Trust Token Redeemer DEMO</h1>
 
-      <details>
-        <summary>Click Me To Continue To Read</summary>
-        <p>Congratuation 🎉🎉</p>
-        <p>
-          We found that your browser saved valid Trust Tokens Issued by
-          <a href="https://trust-token-issuer-demo.glitch.me"
-            >https://trust-token-issuer-demo.glitch.me</a
-          >.
-        </p>
-        <p>
-          This shows you are really a <em>Human</em> not a <em>Bot</em>, so we
-          happy to show you this article without any concern.
-        </p>
-        <p>
-          If you wanna try again issuing trust token, you need to clear issued
-          token saved in browser. Go to
-          <a href="https://trust-token-issuer-demo.glitch.me">Issuer</a> again
-          and click a <em>refresh</em> button at the bottom.
-        </p>
-      </details>
-      <dialog>
-        <section>
-          <h2>Are you really a humna?</h2>
-          <ol>
-            <li id="checking">Checking you are a human or bot...</li>
-            <li id="hasTrustToken">Checking you have a Trust Token...</li>
-            <li id="go2issuer">
-              Go to
-              <a
-                href="https://trust-token-issuer-demo.glitch.me?back=https://trust-token-redeemer-demo.glitch.me"
-                >Trust Token Issuer</a
-              >
-              to get token!
-            </li>
-            <li id="found">Trust Token found!!</li>
-            <li id="redemption">Request redemption to issuer</li>
-            <li id="cached">Already Cached</li>
-            <li id="verify">Verifying your trust token now...</li>
-            <li id="finish">I found you really a human !!</li>
-            <li id="failed">Faield to redeem token</li>
-          </ol>
-        </section>
-      </dialog>
+  <head>
+    <title>Trust Token redeemer demo</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="origin-trial" content="ApuHlYLidjaVMFgSUPpgcqPhdoxucPimpPnGFZN/ry9AHpBSIzB9horvlwbn0ULU3MkhQfeIqjsSDGE6f+2M8QcAAABoeyJvcmlnaW4iOiJodHRwczovL3RydXN0LXRva2VuLXJlZGVlbWVyLWRlbW8uZ2xpdGNoLm1lOjQ0MyIsImZlYXR1cmUiOiJUcnVzdFRva2VucyIsImV4cGlyeSI6MTYxNDczNDE0Nn0=">
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.ico">
+
+    <link rel="stylesheet" href="/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/cbor-js-unofficial@0.1.0-a4/cbor.min.js" defer></script>
+    <script src="/script.js" defer></script>
+
+  </head>
+
+  <body>
+
+    <main>
+
+    <h1>Trust Token redeemer demo</h1>
+
+    <details>
+      <summary>Click me to continue</summary>
+      <p><b>🎉🎉 Congratuations!</b></p>
+      <p>We found that your browser saved valid trust tokens issued by
+        <a href="https://trust-token-issuer-demo.glitch.me">trust-token-issuer-demo.glitch.me</a>.</p>
+      <p>This shows that you are a real human not a bot.</p>
+      <p>If you wanna try issuing a trust token again, you need to clear the issued token saved 
+        in your browser. Go to the <a href="https://trust-token-issuer-demo.glitch.me">Issuer demo</a> 
+        and click the <b>Clear token</b> button at the bottom of the page.</p>
+    </details>
+
+    <dialog>
+      <section>
+        <h2>Are you really a human?</h2>
+        <ol>
+          <li id="checking">Checking if you are a human or a bot...</li>
+          <li id="hasTrustToken">Checking you have a trust token...</li>
+          <li id="go2issuer">Go to <a href="https://trust-token-issuer-demo.glitch.me?back=https://trust-token-redeemer-demo.glitch.me">Trust Token Issuer</a> to get a token!</li>
+          <li id="found">Trust token found!!</li>
+          <li id="redemption">Request redemption to issuer...</li>
+          <li id="cached">Already cached.</li>
+          <li id="verify">Verifying your trust token now...</li>
+          <li id="finish">We found that you really are a human!!</li>
+          <li id="failed">Failed to redeem token.</li>
+        </ol>
+      </section>
+    </dialog>
+
     </main>
+
     <footer>
-      <p>
-        see the <a href="https://trust-token-demo.glitch.me">Doc</a> for more
-        details.
-      </p>
+      <p><a href="https://trust-token-demo.glitch.me">More information about this demo</a></p>
+      <p><b>Please note:</b> These demos do not provide code suitable for production use. 
+        The&nbsp;Trust&nbsp;Tokens API is still experimental, and is undergoing an 
+        <a href="https://web.dev/origin-trials">origin trial</a> in Chrome. The API and the 
+        demos may change without notice at any time.</p>
     </footer>
-  </body>
+
+    </body>
+
 </html>

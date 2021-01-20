@@ -1,3 +1,5 @@
+/* Copyright 2020 Google LLC. SPDX-License-Identifier: Apache-2.0 */
+
 const express = require("express");
 const app = express();
 const cbor = require("cbor");
