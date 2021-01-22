@@ -50,9 +50,9 @@ document.on("DOMContentLoaded", async e => {
         await fetch(`${ISSUER}/.well-known/trust-token/redemption`, {
           method: "POST",
           trustToken: {
-            type: "srr-token-redemption",
+            type: "token-redemption",
             issuer: ISSUER
-            // refreshPolicy: "refresh"
+            refreshPolicy: "none"
           }
         });
       } catch (err) {
@@ -63,17 +63,17 @@ document.on("DOMContentLoaded", async e => {
 
       await progress("#verify");
 
-      // send SRR and echo Sec-Signed-Eedemption-Record
-      const res = await fetch(`/.well-known/trust-token/send-srr`, {
+      // send RR and echo Sec-Redemption-Record
+      const res = await fetch(`/.well-known/trust-token/send-rr`, {
         headers: new Headers({
           "Signed-Headers": "sec-signed-redemption-record, sec-time"
         }),
 
         method: "POST",
         trustToken: {
-          type: "send-srr",
-          issuer: ISSUER, // deprecated
+          type: "send-redemption-record",
           issuers: [ISSUER],
+          refreshPolicy: "none"
           includeTimestampHeader: true,
           signRequestData: "include",
           additionalSigningData: "additional_signing_data"

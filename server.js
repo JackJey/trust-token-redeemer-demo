@@ -17,7 +17,7 @@ app.get("/", async (request, response) => {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-app.post(`/.well-known/trust-token/send-srr`, async (req, res) => {
+app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   console.log(req.path);
 
   const headers = req.headers;
