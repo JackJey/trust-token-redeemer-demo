@@ -51,7 +51,7 @@ document.on("DOMContentLoaded", async e => {
           method: "POST",
           trustToken: {
             type: "token-redemption",
-            issuer: ISSUER
+            issuer: ISSUER,
             refreshPolicy: "none"
           }
         });
@@ -65,15 +65,15 @@ document.on("DOMContentLoaded", async e => {
 
       // send RR and echo Sec-Redemption-Record
       const res = await fetch(`/.well-known/trust-token/send-rr`, {
+        method: "POST",
         headers: new Headers({
-          "Signed-Headers": "sec-signed-redemption-record, sec-time"
+          "Signed-Headers": "sec-redemption-record, sec-time"
         }),
 
-        method: "POST",
         trustToken: {
           type: "send-redemption-record",
           issuers: [ISSUER],
-          refreshPolicy: "none"
+          refreshPolicy: "none",
           includeTimestampHeader: true,
           signRequestData: "include",
           additionalSigningData: "additional_signing_data"
@@ -83,7 +83,7 @@ document.on("DOMContentLoaded", async e => {
       const body = await res.json();
       console.log(JSON.stringify(body, " ", " "));
 
-      if (body.srr_verify && body.public_key_verify && body.sig_verify) {
+      if (body.sig_verify) {
         await progress("#finish");
         $("dialog").close();
         $("summary").removeEventListener("click", verify_human);
