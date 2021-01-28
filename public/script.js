@@ -50,9 +50,9 @@ document.on("DOMContentLoaded", async e => {
         await fetch(`${ISSUER}/.well-known/trust-token/redemption`, {
           method: "POST",
           trustToken: {
-            type: "srr-token-redemption",
-            issuer: ISSUER
-            // refreshPolicy: "refresh"
+            type: "token-redemption",
+            issuer: ISSUER,
+            refreshPolicy: "none"
           }
         });
       } catch (err) {
@@ -63,17 +63,17 @@ document.on("DOMContentLoaded", async e => {
 
       await progress("#verify");
 
-      // send SRR and echo Sec-Signed-Eedemption-Record
-      const res = await fetch(`/.well-known/trust-token/send-srr`, {
+      // send RR and echo Sec-Redemption-Record
+      const res = await fetch(`/.well-known/trust-token/send-rr`, {
+        method: "POST",
         headers: new Headers({
-          "Signed-Headers": "sec-signed-redemption-record, sec-time"
+          "Signed-Headers": "sec-redemption-record, sec-time"
         }),
 
-        method: "POST",
         trustToken: {
-          type: "send-srr",
-          issuer: ISSUER, // deprecated
+          type: "send-redemption-record",
           issuers: [ISSUER],
+          refreshPolicy: "none",
           includeTimestampHeader: true,
           signRequestData: "include",
           additionalSigningData: "additional_signing_data"
@@ -83,7 +83,7 @@ document.on("DOMContentLoaded", async e => {
       const body = await res.json();
       console.log(JSON.stringify(body, " ", " "));
 
-      if (body.srr_verify && body.public_key_verify && body.sig_verify) {
+      if (body.sig_verify) {
         await progress("#finish");
         $("dialog").close();
         $("summary").removeEventListener("click", verify_human);
