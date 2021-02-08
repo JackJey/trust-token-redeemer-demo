@@ -9,13 +9,14 @@
   "dependencies": {
     "express": "^4.17.1",
     "cbor": "^5.1.0",
-    "structured-field-values": "^0.0.2",
+    "structured-field-values": "^0.5.0",
     "noble-ed25519": "^1.0.1",
     "node-fetch": "^2.6.1"
   },
   "trust_token": {
     "ISSUER": "https://trust-token-issuer-demo.glitch.me"
   },
+  "type": "module",
   "engines": {
     "node": "14.x"
   }
