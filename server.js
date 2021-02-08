@@ -1,6 +1,7 @@
 /* Copyright 2020 Google LLC. SPDX-License-Identifier: Apache-2.0 */
 
 import * as fs from "fs";
+import * as path from "path";
 import * as crypto from "crypto";
 import * as sfv from "structured-field-values";
 import cbor from "cbor";
@@ -8,6 +9,8 @@ import ed25519 from "noble-ed25519";
 import express from "express";
 
 const { trust_token } = JSON.parse(fs.readFileSync("./package.json"));
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const app = express();
 
