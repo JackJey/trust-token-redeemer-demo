@@ -1,15 +1,15 @@
 /* Copyright 2020 Google LLC. SPDX-License-Identifier: Apache-2.0 */
 
-const express = require("express");
-const app = express();
-const cbor = require("cbor");
-const sfv = require("structured-field-values");
-const ed25519 = require("noble-ed25519");
-const crypto = require("crypto");
-const fs = require("fs");
-const fetch = require("node-fetch");
+import * as fs from "fs";
+import * as crypto from "crypto";
+import * as sfv from "structured-field-values";
+import cbor from "cbor";
+import ed25519 from "noble-ed25519";
+import express from "express";
 
-const { trust_token } = require("./package.json");
+const { trust_token } = JSON.parse(fs.readFileSync("./package.json"));
+
+const app = express();
 
 app.use(express.static("public"));
 
@@ -26,13 +26,13 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   // sec-redemption-record
   // [(<issuer 1>, {"redemption-record": <SRR 1>}),
   //  (<issuer N>, {"redemption-record": <SRR N>})],
-  const rr = sfv.parseList(headers["sec-redemption-record"]);
+  const rr = sfv.decodeList(headers["sec-redemption-record"]);
   const { value, params } = rr[0];
   const redemption_record = Buffer.from(params["redemption-record"]).toString();
   console.log({ redemption_record });
 
   // verify client_public_key
-  const sec_signature = sfv.parseDict(headers["sec-signature"]);
+  const sec_signature = sfv.decodeDict(headers["sec-signature"]);
   console.log({ sec_signature });
 
   const signatures = sec_signature.signatures.value[0];
