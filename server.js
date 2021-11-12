@@ -61,7 +61,7 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   );
   console.log(cbor.decode(canonical_request_data));
 
-  const prefix = Buffer.from("TrustTokenV2");
+  const prefix = Buffer.from("TrustTokenV3");
   const signing_data = Buffer.concat([prefix, canonical_request_data]);
   const sig_verify = await ed25519.verify(sig, signing_data, client_public_key);
 
