@@ -7,6 +7,8 @@ import * as sfv from "structured-field-values";
 import cbor from "cbor";
 import ed25519 from "noble-ed25519";
 import express from "express";
+import secp256r1 from 'secp256r1';
+
 
 const { trust_token } = JSON.parse(fs.readFileSync("./package.json"));
 
@@ -24,12 +26,14 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   console.log(req.path);
 
   const headers = req.headers;
-  console.log(headers);
+  console.log({ headers });
 
   // sec-redemption-record
   // [(<issuer 1>, {"redemption-record": <SRR 1>}),
   //  (<issuer N>, {"redemption-record": <SRR N>})],
   const rr = sfv.decodeList(headers["sec-redemption-record"]);
+  console.log({ rr })
+
   const { value, params } = rr[0];
   const redemption_record = Buffer.from(params["redemption-record"]).toString();
   console.log({ redemption_record });
@@ -47,23 +51,31 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   const destination = "trust-token-redeemer-demo.glitch.me";
 
   // verify sec-signature
-  const canonical_request_data = cbor.encode(
-    new Map([
-      ["sec-time", headers["sec-time"]],
-      ["public-key", client_public_key],
-      ["destination", destination],
-      ["sec-redemption-record", headers["sec-redemption-record"]],
-      [
-        "sec-trust-tokens-additional-signing-data",
-        headers["sec-trust-tokens-additional-signing-data"]
-      ]
-    ])
-  );
-  console.log(cbor.decode(canonical_request_data));
+  const canonical_request_data = new Map([
+    ["sec-time", headers["sec-time"]],
+    ["public-key", client_public_key],
+    ["destination", destination],
+    ["sec-redemption-record", headers["sec-redemption-record"]],
+    [
+      "sec-trust-tokens-additional-signing-data",
+      headers["sec-trust-tokens-additional-signing-data"]
+    ]
+  ]);
 
-  const prefix = Buffer.from("TrustTokenV2");
-  const signing_data = Buffer.concat([prefix, canonical_request_data]);
-  const sig_verify = await ed25519.verify(sig, signing_data, client_public_key);
+  const cbor_data = cbor.encode(canonical_request_data);
+  const prefix = Buffer.from("TrustTokenV3");
+  const signing_data = Buffer.concat([prefix, cbor_data]);
+  
+  console.log({
+    sig,
+    signing_data,
+    client_public_key,
+    sig_len: sig.length,
+    signing_data_len: signing_data.length,
+    client_public_key_len: client_public_key.length
+  })
+  
+  const sig_verify = secp256r1.verify(signing_data, Buffer.from(sig), Buffer.from(client_public_key));
 
   console.log(sig_verify);
 
