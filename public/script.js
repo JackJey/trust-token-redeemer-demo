@@ -76,7 +76,6 @@ document.on("DOMContentLoaded", async e => {
           refreshPolicy: "none",
           includeTimestampHeader: true,
           signRequestData: "include",
-          additionalSigningData: "additional_signing_data"
         }
       });
 
