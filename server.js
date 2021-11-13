@@ -8,6 +8,7 @@ import cbor from "cbor";
 import ed25519 from "noble-ed25519";
 import express from "express";
 import secp256r1 from 'secp256r1';
+import { webcrypto } from 'crypto';
 
 
 const { trust_token } = JSON.parse(fs.readFileSync("./package.json"));
@@ -65,7 +66,7 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   const cbor_data = cbor.encode(canonical_request_data);
   const prefix = Buffer.from("TrustTokenV3");
   const signing_data = Buffer.concat([prefix, cbor_data]);
-  
+
   console.log({
     sig,
     signing_data,
@@ -74,8 +75,24 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
     signing_data_len: signing_data.length,
     client_public_key_len: client_public_key.length
   })
-  
-  const sig_verify = secp256r1.verify(signing_data, Buffer.from(sig), Buffer.from(client_public_key));
+
+  const key = await webcrypto.subtle.importKey(
+    'raw',
+    client_public_key,
+    {
+      name: "ECDSA",
+      namedCurve: "P-256"
+    },
+    true,
+    ['verify']
+  );
+
+  console.log(key)
+
+  const sig_verify = await webcrypto.subtle.verify({
+    name: "ECDSA",
+    hash: "SHA-256",
+  }, key, sig, new Uint8Array(signing_data));
 
   console.log(sig_verify);
 
