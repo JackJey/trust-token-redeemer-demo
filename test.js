@@ -2,36 +2,49 @@ import cbor from "cbor";
 import { webcrypto } from 'crypto';
 import * as sfv from "structured-field-values";
 
-
+// chrome canary M100
 const headers = {
-  "sec-redemption-record": `"https://a.test:39135";redemption-record=:Ym9keT06cEdodFpYUmhaR0YwWWFKbWNIVmliR2xqQUdkd2NtbDJZWFJsQUdwMGIydGxiaTFvWVhOb1dDQXlSWnJWdUhJYzBYYjlPRzNxZFZLcmdoYncxeUlnSklLTGtGQjl4Qllob1d0amJHbGxiblF0WkdGMFlhTm9hMlY1TFdoaGMyaFlJRzdoV1FmSG5lVS9YcjVyVlRJeTlWeXN1MGorY203dWl0UkdSUXpnMW5SYmNISmxaR1ZsYldsdVp5MXZjbWxuYVc1MGFIUjBjSE02THk5aExuUmxjM1E2TXpreE16VjBjbVZrWlcxd2RHbHZiaTEwYVcxbGMzUmhiWEFhWVA5RVJuQmxlSEJwY25rdGRHbHRaWE4wWVcxd0FBPT06LCBzaWduYXR1cmU9OktWR0tzWnoyVXV1bzhCZ0hnSmtyVmRmdTg5R2J0V1VIME1HVG1tQWJWSWtHdWRqMXVKbTVVbVFHQS83Y09LenB2V1E4L2M1REdBNEFqQW9SQnJ1TENRPT06:`,
-  "sec-signature": `signatures=("https://a.test:39135";public-key=:BCGEjkKZJuBqMIcpOkPh7pUYLSHUfVHJHTET/aBfsCY6GOAEY2lEILA1HTPFl7Sk4Mbr6BLbMOx9i/SXEXb08dE=:;sig=:MEUCIBMpY10dGkgFwEYtBydjHIKuqcUwFJpGXArQ+Lbssii5AiEA9twtv8vXAPQoCc/9BVBQSI6SOvN/yBmKFq58X7HOsaY=:;alg="ecdsa_secp256r1_sha256"), sign-request-data=include`,
-  "sec-trust-token-version": `TrustTokenV3`
+  connection: 'close',
+  host: 'trust-token-redeemer-demo.glitch.me',
+  'content-length': '0',
+  pragma: 'no-cache',
+  'cache-control': 'no-cache',
+  'sec-ch-ua': '"Chromium";v="100", "Google Chrome";v="100", "(Not:A-Brand";v="99"',
+  'sec-ch-ua-mobile': '?0',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4700.0 Safari/537.36',
+  'sec-ch-ua-platform': '"macOS"',
+  accept: '*/*',
+  origin: 'https://trust-token-redeemer-demo.glitch.me',
+  'sec-fetch-site': 'same-origin',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-dest': 'empty',
+  'sec-trust-tokens-additional-signing-data': 'additional_signing_data',
+  'signed-headers': 'sec-redemption-record,sec-time,sec-trust-tokens-additional-signing-data',
+  'sec-redemption-record': '"https://trust-token-issuer-demo.glitch.me";redemption-record=:eyJwdWJpY19tZXRhZGF0YSI6IDEsICJwcml2YXRlX21ldGFkYXRhIjogMH0=:',
+  'sec-time': '2021-11-13T11:49:53.212Z',
+  'sec-signature': 'signatures=("https://trust-token-issuer-demo.glitch.me";public-key=:BEq5ZCqPw45mme+Tjt7C1Xs9cPKGmaGADZMNmK2eTqT3FaNF+GibRIuFO48aRE1yfomTK7DOTPPnjTf8aPjo/gA=:;sig=:MEQCIAncKoQImFwKYplJ90DxOR+Yk3cu+aq5lw4W1ipSgSNlAiBjnFNIPdLoapbwOaL5/9OI/1xe4MHuQYrxJYFsnBy89w==:;alg="ecdsa_secp256r1_sha256"), sign-request-data=include',
+  'sec-trust-token-version': 'TrustTokenV3',
+  referer: 'https://trust-token-redeemer-demo.glitch.me/',
+  'accept-encoding': 'gzip, deflate, br',
+  'accept-language': 'en-US,en;q=0.9,ja;q=0.8',
+  'x-forwarded-host': 'trust-token-redeemer-demo.glitch.me',
+  traceparent: '00-13e292de42e147719024ed500a9aa594-4b217ad6776db57e-01'
 }
+console.log(headers)
 
-// console.log(header)
-
-const SecRedumptionRecord = sfv.decodeList(headers["sec-redemption-record"])[0]
 const SecSignature = sfv.decodeDict(headers["sec-signature"])
 
-console.log({ SecRedumptionRecord })
-console.log({ SecSignature })
-
 const signature = SecSignature.signatures.value[0]
-
 const sig = signature.params.sig
-const client_public_key = signature.params['public-key']
-console.log(sig)
-console.log(client_public_key)
+const client_public_key = signature.params["public-key"]
 
-const destination = "a.test"
+const destination = headers["host"]
 
-// verify sec-signature
 const canonical_request_data = new Map([
   ["destination", destination],
   ["sec-redemption-record", headers["sec-redemption-record"]],
-  // ["sec-time", headers["sec-time"]],
-  // ["sec-trust-tokens-additional-signing-data", headers["sec-trust-tokens-additional-signing-data"]],
+  ["sec-time", headers["sec-time"]],
+  ["sec-trust-tokens-additional-signing-data", headers["sec-trust-tokens-additional-signing-data"]],
   ["public-key", client_public_key],
 ]);
 
@@ -39,18 +52,17 @@ console.log(canonical_request_data)
 
 const cbor_data = cbor.encode(canonical_request_data);
 const prefix = Buffer.from("TrustTokenV3");
-console.log({ prefix })
 const signing_data = new Uint8Array(Buffer.concat([prefix, cbor_data]));
 
 const key = await webcrypto.subtle.importKey(
-  'raw',
+  "raw",
   client_public_key,
   {
     name: "ECDSA",
     namedCurve: "P-256"
   },
   true,
-  ['verify']
+  ["verify"]
 );
 
 console.log(key)
