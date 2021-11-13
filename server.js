@@ -8,6 +8,7 @@ import cbor from "cbor";
 import ed25519 from "noble-ed25519";
 import express from "express";
 import secp256r1 from 'secp256r1';
+import { webcrypto } from 'crypto';
 
 
 const { trust_token } = JSON.parse(fs.readFileSync("./package.json"));
@@ -43,8 +44,10 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   console.log({ sec_signature });
 
   const signatures = sec_signature.signatures.value[0];
+  console.log({signatures})
   const client_public_key = signatures.params["public-key"];
   console.log({ client_public_key });
+
   const sig = signatures.params["sig"];
   console.log({ sig });
 
@@ -52,20 +55,20 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
 
   // verify sec-signature
   const canonical_request_data = new Map([
-    ["sec-time", headers["sec-time"]],
-    ["public-key", client_public_key],
     ["destination", destination],
     ["sec-redemption-record", headers["sec-redemption-record"]],
-    [
-      "sec-trust-tokens-additional-signing-data",
-      headers["sec-trust-tokens-additional-signing-data"]
-    ]
+    ["sec-time", headers["sec-time"]],
+    ["sec-trust-tokens-additional-signing-data", headers["sec-trust-tokens-additional-signing-data"]],
+    ["public-key", client_public_key],
   ]);
+  
+  console.log(canonical_request_data)
 
   const cbor_data = cbor.encode(canonical_request_data);
   const prefix = Buffer.from("TrustTokenV3");
-  const signing_data = Buffer.concat([prefix, cbor_data]);
-  
+  console.log({prefix})
+  const signing_data = new Uint8Array(Buffer.concat([prefix, cbor_data]));
+
   console.log({
     sig,
     signing_data,
@@ -74,10 +77,27 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
     signing_data_len: signing_data.length,
     client_public_key_len: client_public_key.length
   })
-  
-  const sig_verify = secp256r1.verify(signing_data, Buffer.from(sig), Buffer.from(client_public_key));
 
-  console.log(sig_verify);
+  const key = await webcrypto.subtle.importKey(
+    'raw',
+    client_public_key,
+    {
+      name: "ECDSA",
+      namedCurve: "P-256"
+    },
+    true,
+    ['verify']
+  );
+
+  console.log(key)
+
+  
+  const sig_verify = await webcrypto.subtle.verify({
+    name: "ECDSA",
+    hash: "SHA-256",
+  }, key, sig, signing_data);
+
+  console.log({sig_verify});
 
   res.set({
     "Access-Control-Allow-Origin": "*"
