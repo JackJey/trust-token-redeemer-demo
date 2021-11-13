@@ -44,8 +44,10 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   console.log({ sec_signature });
 
   const signatures = sec_signature.signatures.value[0];
+  console.log({signatures})
   const client_public_key = signatures.params["public-key"];
   console.log({ client_public_key });
+
   const sig = signatures.params["sig"];
   console.log({ sig });
 
@@ -53,19 +55,19 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
 
   // verify sec-signature
   const canonical_request_data = new Map([
-    ["sec-time", headers["sec-time"]],
-    ["public-key", client_public_key],
     ["destination", destination],
     ["sec-redemption-record", headers["sec-redemption-record"]],
-    [
-      "sec-trust-tokens-additional-signing-data",
-      headers["sec-trust-tokens-additional-signing-data"]
-    ]
+    ["sec-time", headers["sec-time"]],
+    ["sec-trust-tokens-additional-signing-data", headers["sec-trust-tokens-additional-signing-data"]],
+    ["public-key", client_public_key],
   ]);
+  
+  console.log(canonical_request_data)
 
   const cbor_data = cbor.encode(canonical_request_data);
   const prefix = Buffer.from("TrustTokenV3");
-  const signing_data = Buffer.concat([prefix, cbor_data]);
+  console.log({prefix})
+  const signing_data = new Uint8Array(Buffer.concat([prefix, cbor_data]));
 
   console.log({
     sig,
@@ -89,12 +91,13 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
 
   console.log(key)
 
+  
   const sig_verify = await webcrypto.subtle.verify({
     name: "ECDSA",
     hash: "SHA-256",
-  }, key, sig, new Uint8Array(signing_data));
+  }, key, sig, signing_data);
 
-  console.log(sig_verify);
+  console.log({sig_verify});
 
   res.set({
     "Access-Control-Allow-Origin": "*"
