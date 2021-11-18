@@ -5,9 +5,7 @@ import * as path from "path";
 import * as crypto from "crypto";
 import * as sfv from "structured-field-values";
 import cbor from "cbor";
-import ed25519 from "noble-ed25519";
 import express from "express";
-import secp256r1 from 'secp256r1';
 import { webcrypto } from 'crypto';
 
 
