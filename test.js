@@ -1,3 +1,9 @@
+// setup
+// $ npm install
+//
+// run
+// $ npm test
+
 import cbor from "cbor";
 import { webcrypto } from 'crypto';
 import * as sfv from "structured-field-values";
