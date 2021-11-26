@@ -5,7 +5,7 @@
 // $ npm test
 
 import cbor from "cbor";
-import { webcrypto, verify, createPublicKey } from 'crypto';
+import { webcrypto, verify, createPublicKey, KeyObject } from 'crypto';
 import * as sfv from "structured-field-values";
 
 // CBOR encoder
@@ -131,21 +131,11 @@ console.log(signature)
 
 
 const sig = signature.params.sig
+
 const public_key = signature.params["public-key"]
 
-// bytestring(3bit) = 2
-// additional(5bit) = 24
-// 010,11000 = 88
-// length(1byte)
-// payload
-const public_key_bytestring = new Uint8Array([88, public_key.length, ...public_key])
-console.log({ public_key, public_key_bytestring })
-
-
-const destination = headers["host"]
-
 const canonical_request_data = new Map([
-  ["destination", destination],
+  ["destination", headers["host"]],
   ["sec-redemption-record", headers["sec-redemption-record"]],
   ["sec-time", headers["sec-time"]],
   ["sec-trust-tokens-additional-signing-data", headers["sec-trust-tokens-additional-signing-data"]],
@@ -183,7 +173,6 @@ console.log({ signing_data })
 //   ]
 // }
 
-
 const key = await webcrypto.subtle.importKey(
   "raw",
   public_key,
@@ -194,7 +183,6 @@ const key = await webcrypto.subtle.importKey(
   true,
   ["verify"]
 );
-
 console.log({ key })
 // {
 //   key: CryptoKey {
@@ -205,16 +193,36 @@ console.log({ key })
 //   }
 // }
 
-
+// verify by WebCrypto
 const result = await webcrypto.subtle.verify({
   name: "ECDSA",
   hash: "SHA-256",
 }, key,
-  new Uint8Array([...sig.slice(4, 36), ...sig.slice(37, 70)]), // DER -> Raw
+  // DER->raw
+  new Uint8Array([...sig.slice(4, 36), ...sig.slice(37, 70)]),
+  // new Uint8Array([...sig.slice(2)]),
   signing_data);
 
 console.log({ result })
 // { result: false }
+
+
+// verify by Node Crypto
+const key_object = KeyObject.from(key);
+console.log(key_object)
+verify('ECDSA', signing_data, key_object, new Uint8Array([...sig.slice(4, 36), ...sig.slice(37, 70)]), (err, result) => {
+  // node:internal/crypto/sig:273
+  // const job = new SignJob(
+  //             ^
+
+  // TypeError: Invalid digest
+  //     at verifyOneShot (node:internal/crypto/sig:273:15)
+  //     at file:///home/jxck/develop/trust-token-redeemer-demo/test.js:211:1 {
+  //   code: 'ERR_CRYPTO_INVALID_DIGEST'
+  // }
+  console.log(err)
+  console.log(result)
+})
 
 
 // 1) The signature that webcrypto.subtle.verify expects is different from the one that Chrome uses (DER vs raw).
@@ -226,3 +234,5 @@ console.log({ result })
 // Signed requests’ signatures become DER-encoded ECDSA-Sig-Value objects containing P-256 (SHA-256) ECDSA signatures.
 // The alg field in signed requests’ Sec-Signature header moves into the signatures field, as in the golden request below.
 // The alg field’s value becomes "ecdsa_secp256r1_sha256", to indicate that the signature comes from P-256 ECDSA.
+
+
