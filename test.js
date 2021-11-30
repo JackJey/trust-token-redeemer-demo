@@ -8,6 +8,7 @@ import {map} from "./cbor.js";
 import {ecdsaDERToFixedWidth} from "./der.js";
 import { webcrypto, verify, KeyObject } from 'crypto';
 import * as sfv from "structured-field-values";
+import { promisify } from "util";
 
 function hex(bin) {
   return Array.from(bin).map((n) => {
@@ -111,7 +112,7 @@ console.log({ canonical_request_data })
 // }
 
 const cbor_data = map(canonical_request_data);
-const prefix = new Uint8Array(Buffer.from("TrustTokenV3"));
+const prefix = Buffer.from(headers["sec-trust-token-version"])
 const signing_data = new Uint8Array([...prefix, ...cbor_data])
 
 console.log({ signing_data })
@@ -170,12 +171,10 @@ const result = await webcrypto.subtle.verify({
   name: "ECDSA",
   hash: "SHA-256",
 }, key, der, signing_data);
-
 console.log({ result }) // true
 
 // verify by Node Crypto
 const key_object = KeyObject.from(key);
 console.log(key_object)
-verify('SHA256', signing_data, key_object, sig, (err, result) => {
-  console.log({err, result}) // true
-})
+const result2 = await promisify(verify)('SHA256', signing_data, key_object, sig)
+console.log({ result2 })
