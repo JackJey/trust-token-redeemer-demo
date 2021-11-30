@@ -26,7 +26,15 @@ export function map(m) {
   const type = (5 << 5)
   head[0] += type
 
-  for (const [k, v] of m.entries()) {
+  const keys = Array.from(m.keys()).sort((a, b) => {
+    if (a.length === b.length) {
+      return (a < b) ? -1 : 1
+    }
+    return (a.length < b.length) ? -1 : 1
+  })
+
+  for (const k of keys) {
+    const v = m.get(k)
     head.push(...text_string(k))
 
     if (v instanceof Uint8Array) {

@@ -85,11 +85,11 @@ console.log(signature)
 const sig = signature.params.sig
 const public_key = signature.params["public-key"]
 const canonical_request_data = new Map([
-  ["sec-time", headers["sec-time"]],
-  ["public-key", public_key],
   ["destination", headers["host"]],
   ["sec-redemption-record", headers["sec-redemption-record"]],
+  ["sec-time", headers["sec-time"]],
   ["sec-trust-tokens-additional-signing-data", headers["sec-trust-tokens-additional-signing-data"]],
+  ["public-key", public_key],
 ]);
 
 console.log({ canonical_request_data })
