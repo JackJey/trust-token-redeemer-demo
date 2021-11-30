@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as sfv from "structured-field-values";
 import express from "express";
-import { webcrypto, KeyObject } from 'crypto';
+import { webcrypto, verify, KeyObject } from 'crypto';
 import { promisify } from "util";
 import { map } from "./cbor.js";
 
