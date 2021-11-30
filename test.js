@@ -135,11 +135,11 @@ const sig = signature.params.sig
 const public_key = signature.params["public-key"]
 
 const canonical_request_data = new Map([
+  ["sec-time", headers["sec-time"]],
+  ["public-key", public_key],
   ["destination", headers["host"]],
   ["sec-redemption-record", headers["sec-redemption-record"]],
-  ["sec-time", headers["sec-time"]],
   ["sec-trust-tokens-additional-signing-data", headers["sec-trust-tokens-additional-signing-data"]],
-  ["public-key", public_key],
 ]);
 
 console.log({ canonical_request_data })
@@ -169,7 +169,30 @@ const signing_data = new Uint8Array([...prefix, ...cbor_data])
 console.log({ signing_data })
 // {
 //   signing_data: Uint8Array(391) [
-//     84, 114, 117, 115, 116, 84, 111, 107, 101, 110, 86, 51, 165, 107, 100, 101, 115, 116, 105, 110, 97, 116, 105, 111, 110, 120, 35, 116, 114, 117, 115, 116, 45, 116, 111, 107, 101, 110, 45, 114, 101, 100, 101, 101, 109, 101, 114, 45, 100, 101, 109, 111, 46, 103, 108, 105, 116, 99, 104, 46, 109, 101, 117, 115, 101, 99, 45, 114, 101, 100, 101, 109, 112, 116, 105, 111, 110, 45, 114, 101, 99, 111, 114, 100, 120, 124, 34, 104, 116, 116, 112, 115, 58, 47, 47, 116, 114, 117, 115, 116, 45, 116, 111, 107, 101, 110, 45, 105, 115, 115, 117, 101, 114, 45, 100, 101, 109, 111, 46, 103, 108, 105, 116, 99, 104, 46, 109, 101, 34, 59, 114, 101, 100, 101, 109, 112, 116, 105, 111, 110, 45, 114, 101, 99, 111, 114, 100, 61, 58, 101, 121, 74, 119, 100, 87, 74, 112, 89, 49, 57, 116, 90, 88, 82, 104, 90, 71, 70, 48, 89, 83, 73, 54, 73, 68, 69, 115, 73, 67, 74, 119, 99, 109, 108, 50, 89, 88, 82, 108, 88, 50, 49, 108, 100, 71, 70, 107, 89, 88, 82, 104, 73, 106, 111, 103, 77, 72, 48, 61, 58, 104, 115, 101, 99, 45, 116, 105, 109, 101, 120, 24, 50, 48, 50, 49, 45, 49, 49, 45, 49, 51, 84, 49, 49, 58, 52, 57, 58, 53, 51, 46, 50, 49, 50, 90, 120, 40, 115, 101, 99, 45, 116, 114, 117, 115, 116, 45, 116, 111, 107, 101, 110, 115, 45, 97, 100, 100, 105, 116, 105, 111, 110, 97, 108, 45, 115, 105, 103, 110, 105, 110, 103, 45, 100, 97, 116, 97, 119, 97, 100, 100, 105, 116, 105, 111, 110, 97, 108, 95, 115, 105, 103, 110, 105, 110, 103, 95, 100, 97, 116, 97, 106, 112, 117, 98, 108, 105, 99, 45, 107, 101, 121, 216, 64, 88, 65, 4, 74, 185, 100, 42, 143, 195, 142, 102, 153, 239, 147, 142, 222, 194, 213, 123, 61, 112, 242, 134, 153, 161, 128, 13, 147, 13, 152, 173, 158, 78, 164, 247, 21, 163, 69, 248, 104, 155, 68, 139, 133, 59, 143, 26, 68, 77, 114, 126, 137, 147, 43, 176, 206, 76, 243, 231, 141, 55, 252, 104, 248, 232, 254, 0
+//     84, 114, 117, 115, 116, 84, 111, 107, 101, 110, 86, 51, 165, 107, 100, 101,
+//     115, 116, 105, 110, 97, 116, 105, 111, 110, 120, 35, 116, 114, 117, 115, 116,
+//     45, 116, 111, 107, 101, 110, 45, 114, 101, 100, 101, 101, 109, 101, 114, 45,
+//     100, 101, 109, 111, 46, 103, 108, 105, 116, 99, 104, 46, 109, 101, 117, 115,
+//     101, 99, 45, 114, 101, 100, 101, 109, 112, 116, 105, 111, 110, 45, 114, 101,
+//     99, 111, 114, 100, 120, 124, 34, 104, 116, 116, 112, 115, 58, 47, 47, 116,
+//     114, 117, 115, 116, 45, 116, 111, 107, 101, 110, 45, 105, 115, 115, 117, 101,
+//     114, 45, 100, 101, 109, 111, 46, 103, 108, 105, 116, 99, 104, 46, 109, 101,
+//     34, 59, 114, 101, 100, 101, 109, 112, 116, 105, 111, 110, 45, 114, 101, 99,
+//     111, 114, 100, 61, 58, 101, 121, 74, 119, 100, 87, 74, 112, 89, 49, 57, 116,
+//     90, 88, 82, 104, 90, 71, 70, 48, 89, 83, 73, 54, 73, 68, 69, 115, 73, 67, 74,
+//     119, 99, 109, 108, 50, 89, 88, 82, 108, 88, 50, 49, 108, 100, 71, 70, 107, 89,
+//     88, 82, 104, 73, 106, 111, 103, 77, 72, 48, 61, 58, 104, 115, 101, 99, 45,
+//     116, 105, 109, 101, 120, 24, 50, 48, 50, 49, 45, 49, 49, 45, 49, 51, 84, 49,
+//     49, 58, 52, 57, 58, 53, 51, 46, 50, 49, 50, 90, 120, 40, 115, 101, 99, 45,
+//     116, 114, 117, 115, 116, 45, 116, 111, 107, 101, 110, 115, 45, 97, 100, 100,
+//     105, 116, 105, 111, 110, 97, 108, 45, 115, 105, 103, 110, 105, 110, 103, 45,
+//     100, 97, 116, 97, 119, 97, 100, 100, 105, 116, 105, 111, 110, 97, 108, 95,
+//     115, 105, 103, 110, 105, 110, 103, 95, 100, 97, 116, 97, 106, 112, 117, 98,
+//     108, 105, 99, 45, 107, 101, 121, 88, 65, 4, 74, 185, 100, 42, 143, 195, 142,
+//     102, 153, 239, 147, 142, 222, 194, 213, 123, 61, 112, 242, 134, 153, 161, 128,
+//     13, 147, 13, 152, 173, 158, 78, 164, 247, 21, 163, 69, 248, 104, 155, 68, 139,
+//     133, 59, 143, 26, 68, 77, 114, 126, 137, 147, 43, 176, 206, 76, 243, 231, 141,
+//     55, 252, 104, 248, 232, 254, 0,
 //   ]
 // }
 
@@ -199,7 +222,7 @@ const result = await webcrypto.subtle.verify({
   hash: "SHA-256",
 }, key,
   // DER->raw
-  new Uint8Array([...sig.slice(4, 36), ...sig.slice(37, 70)]),
+  new Uint8Array([...sig.slice(4, 36), ...sig.slice(38, 70)]),
   // new Uint8Array([...sig.slice(2)]),
   signing_data);
 
@@ -210,7 +233,7 @@ console.log({ result })
 // verify by Node Crypto
 const key_object = KeyObject.from(key);
 console.log(key_object)
-verify('ECDSA', signing_data, key_object, new Uint8Array([...sig.slice(4, 36), ...sig.slice(37, 70)]), (err, result) => {
+verify('SHA256', signing_data, key_object, sig, (err, result) => {
   // node:internal/crypto/sig:273
   // const job = new SignJob(
   //             ^
@@ -220,19 +243,5 @@ verify('ECDSA', signing_data, key_object, new Uint8Array([...sig.slice(4, 36), .
   //     at file:///home/jxck/develop/trust-token-redeemer-demo/test.js:211:1 {
   //   code: 'ERR_CRYPTO_INVALID_DIGEST'
   // }
-  console.log(err)
-  console.log(result)
+  console.log({err, result})
 })
-
-
-// 1) The signature that webcrypto.subtle.verify expects is different from the one that Chrome uses (DER vs raw).
-// -- You can sort of hack it in by doing sig = new Uint8Array([...sig.slice(4, 36), ...sig.slice(37, 70)])
-
-// For Chrome 93, the signed request consumption system should be able to validate TrustTokenV3 signed requests. Recapping from above, the changes to signed requests coming in Chrome 93 are:
-// Signed requests’ domain separator string changes from TrustTokenV2 to TrustTokenV3.
-// Signed requests’ public keys change to be P-256 points in the standard (uncompressed) point encoding.
-// Signed requests’ signatures become DER-encoded ECDSA-Sig-Value objects containing P-256 (SHA-256) ECDSA signatures.
-// The alg field in signed requests’ Sec-Signature header moves into the signatures field, as in the golden request below.
-// The alg field’s value becomes "ecdsa_secp256r1_sha256", to indicate that the signature comes from P-256 ECDSA.
-
-
