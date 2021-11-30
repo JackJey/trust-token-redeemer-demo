@@ -63,7 +63,7 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
   const cbor_data = map(canonical_request_data);
   const prefix = Buffer.from(headers["sec-trust-token-version"])
   console.log({ prefix })
-  const signing_data = new Uint8Array(Buffer.concat([prefix, cbor_data]));
+  const signing_data = new Uint8Array([...prefix, ...cbor_data]);
 
   console.log({
     sig,
