@@ -2,12 +2,11 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import * as crypto from "crypto";
 import * as sfv from "structured-field-values";
-import cbor from "cbor";
 import express from "express";
-import { webcrypto } from 'crypto';
-
+import { webcrypto, KeyObject } from 'crypto';
+import { promisify } from "util";
+import { map } from "./cbor.js";
 
 const { trust_token } = JSON.parse(fs.readFileSync("./package.json"));
 
@@ -61,9 +60,9 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
 
   console.log(canonical_request_data)
 
-  const cbor_data = cbor.encode(canonical_request_data);
+  const cbor_data = map(canonical_request_data);
   const prefix = Buffer.from(headers["sec-trust-token-version"])
-  console.log({prefix})
+  console.log({ prefix })
   const signing_data = new Uint8Array(Buffer.concat([prefix, cbor_data]));
 
   console.log({
@@ -88,12 +87,11 @@ app.post(`/.well-known/trust-token/send-rr`, async (req, res) => {
 
   console.log(key)
 
+  // verify by Node Crypto
+  const key_object = KeyObject.from(key);
+  console.log(key_object)
 
-  const sig_verify = await webcrypto.subtle.verify({
-    name: "ECDSA",
-    hash: "SHA-256",
-  }, key, sig, signing_data);
-
+  const sig_verify = await promisify(verify)('SHA256', signing_data, key_object, sig)
   console.log({ sig_verify });
 
   res.set({
