@@ -4,63 +4,17 @@
 // run
 // $ npm test
 
-import cbor from "cbor";
-import { webcrypto, verify, createPublicKey, KeyObject } from 'crypto';
+import {map} from "./cbor.js";
+import {ecdsaDERToFixedWidth} from "./der.js";
+import { webcrypto, verify, KeyObject } from 'crypto';
 import * as sfv from "structured-field-values";
-
-// CBOR encoder
-
-// Text String (type 3)
-function text_string(str) {
-  const length = str.length
-  const head = len(length)
-  const type = (3 << 5)
-  head[0] += type
-  const encoder = new TextEncoder()
-  const bin = encoder.encode(str)
-  return new Uint8Array([...head, ...bin])
-}
-
-// Byte String (type 2)
-function byte_string(byte) {
-  const length = byte.length
-  const head = len(length)
-  const type = (2 << 5)
-  head[0] += type
-  return new Uint8Array([...head, ...byte])
-}
-
-// Map (type 5)
-function map(m) {
-  const head = len(m.size)
-  const type = (5 << 5)
-  head[0] += type
-
-  for (const [k, v] of m.entries()) {
-    head.push(...text_string(k))
-
-    if (v instanceof Uint8Array) {
-      head.push(...byte_string(v))
-    }
-    if (typeof v === 'string') {
-      head.push(...text_string(v))
-    }
-  }
-
-  return head
-}
-
-function len(length) {
-  if (length < 24) return [length]
-  if (length < 255) return [24, length]
-  throw 'not supported'
-}
 
 function hex(bin) {
   return Array.from(bin).map((n) => {
     return n.toString(16).padStart(2, '0')
   }).join(' ')
 }
+
 
 
 // chrome canary M100
@@ -91,10 +45,9 @@ const headers = {
   'x-forwarded-host': 'trust-token-redeemer-demo.glitch.me',
   traceparent: '00-13e292de42e147719024ed500a9aa594-4b217ad6776db57e-01'
 }
-console.log({ headers })
+
 
 const SecSignature = sfv.decodeDict(headers["sec-signature"])
-
 console.log({ SecSignature })
 // {
 //   SecSignature: {
@@ -102,7 +55,6 @@ console.log({ SecSignature })
 //     'sign-request-data': Item { value: Symbol(include), params: null }
 //   }
 // }
-
 
 const signature = SecSignature.signatures.value[0]
 console.log(signature)
@@ -131,9 +83,7 @@ console.log(signature)
 
 
 const sig = signature.params.sig
-
 const public_key = signature.params["public-key"]
-
 const canonical_request_data = new Map([
   ["sec-time", headers["sec-time"]],
   ["public-key", public_key],
@@ -160,9 +110,7 @@ console.log({ canonical_request_data })
 //   }
 // }
 
-
 const cbor_data = map(canonical_request_data);
-console.log({cbor_data})
 const prefix = new Uint8Array(Buffer.from("TrustTokenV3"));
 const signing_data = new Uint8Array([...prefix, ...cbor_data])
 
@@ -217,31 +165,17 @@ console.log({ key })
 // }
 
 // verify by WebCrypto
+const der = ecdsaDERToFixedWidth(sig, 32)
 const result = await webcrypto.subtle.verify({
   name: "ECDSA",
   hash: "SHA-256",
-}, key,
-  // DER->raw
-  new Uint8Array([...sig.slice(4, 36), ...sig.slice(38, 70)]),
-  // new Uint8Array([...sig.slice(2)]),
-  signing_data);
+}, key, der, signing_data);
 
-console.log({ result })
-// { result: false }
-
+console.log({ result }) // true
 
 // verify by Node Crypto
 const key_object = KeyObject.from(key);
 console.log(key_object)
 verify('SHA256', signing_data, key_object, sig, (err, result) => {
-  // node:internal/crypto/sig:273
-  // const job = new SignJob(
-  //             ^
-
-  // TypeError: Invalid digest
-  //     at verifyOneShot (node:internal/crypto/sig:273:15)
-  //     at file:///home/jxck/develop/trust-token-redeemer-demo/test.js:211:1 {
-  //   code: 'ERR_CRYPTO_INVALID_DIGEST'
-  // }
-  console.log({err, result})
+  console.log({err, result}) // true
 })
